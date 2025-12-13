@@ -52,16 +52,32 @@ private:
     vector<DataKonsol> konsol;
     vector<TransaksiSewa> transaksi;
     int nextTransaksi = 1;
+    bool isAdmin = false;
 
-    // membersihkan input buffer
     void clearInput() {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
 public:
-    /* ===== FITUR MENU ===== */
+    /* ===== LOGIN ADMIN ===== */
+    void loginAdmin() {
+        string user, pass;
+        cout << "\n=== LOGIN ADMIN ===\n";
+        cout << "Username: ";
+        cin >> user;
+        cout << "Password: ";
+        cin >> pass;
 
+        if (user == "admin" && pass == "123") {
+            isAdmin = true;
+            cout << "Login admin berhasil.\n";
+        } else {
+            cout << "Login gagal. Masuk sebagai pelanggan.\n";
+        }
+    }
+
+    /* ===== FITUR ===== */
     void muatData() {
         cout << "Fitur muat data belum diaktifkan.\n";
     }
@@ -115,11 +131,6 @@ public:
     }
 
     void cariKonsol() {
-        if (konsol.empty()) {
-            cout << "Data konsol kosong.\n";
-            return;
-        }
-
         string cari;
         clearInput();
         cout << "Cari nama konsol: ";
@@ -139,7 +150,6 @@ public:
     void editKonsol() {
         int id;
         double harga;
-
         cout << "ID Konsol: ";
         cin >> id;
 
@@ -160,7 +170,7 @@ public:
         cout << "ID Konsol: ";
         cin >> id;
 
-        for (int i = 0; i < konsol.size(); i++) {
+        for (int i = 0; i < (int)konsol.size(); i++) {
             if (konsol[i].getId() == id) {
                 konsol.erase(konsol.begin() + i);
                 cout << "Konsol berhasil dihapus.\n";
@@ -212,41 +222,75 @@ public:
     /* ===== MENU UTAMA ===== */
     void menu() {
         int pilih;
+        char jawab;
+
+        cout << "Login sebagai admin? (y/n): ";
+        cin >> jawab;
+        if (jawab == 'y' || jawab == 'Y') {
+            loginAdmin();
+        }
 
         while (true) {
             cout << "\n===================================\n";
-            cout << "   APLIKASI RENTAL PLAYSTATION\n";
+            cout << "APLIKASI RENTAL PLAYSTATION\n";
             cout << "===================================\n";
-            cout << "1. Muat Data\n";
-            cout << "2. Simpan Data\n";
-            cout << "3. Tambah Konsol\n";
+
+            if (isAdmin) {
+                cout << "1. Muat Data\n";
+                cout << "2. Simpan Data\n";
+                cout << "3. Tambah Konsol\n";
+                cout << "6. Edit Konsol\n";
+                cout << "7. Hapus Konsol\n";
+                cout << "9. Pengembalian Konsol\n";
+            }
+
             cout << "4. Tampilkan Konsol\n";
             cout << "5. Cari Konsol\n";
-            cout << "6. Edit Konsol\n";
-            cout << "7. Hapus Konsol\n";
             cout << "8. Sewa Konsol\n";
-            cout << "9. Pengembalian Konsol\n";
             cout << "0. Keluar\n";
             cout << "Pilih menu: ";
 
             cin >> pilih;
-
             if (cin.fail()) {
                 clearInput();
-                cout << "Input tidak valid. Masukkan angka.\n";
+                cout << "Input tidak valid.\n";
                 continue;
             }
 
             switch (pilih) {
-                case 1: muatData(); break;
-                case 2: simpanData(); break;
-                case 3: tambahKonsol(); break;
-                case 4: tampilkanKonsol(); break;
-                case 5: cariKonsol(); break;
-                case 6: editKonsol(); break;
-                case 7: hapusKonsol(); break;
-                case 8: sewaKonsol(); break;
-                case 9: pengembalianKonsol(); break;
+                case 1:
+                    if (isAdmin) muatData();
+                    else cout << "Akses ditolak.\n";
+                    break;
+                case 2:
+                    if (isAdmin) simpanData();
+                    else cout << "Akses ditolak.\n";
+                    break;
+                case 3:
+                    if (isAdmin) tambahKonsol();
+                    else cout << "Akses ditolak.\n";
+                    break;
+                case 4:
+                    tampilkanKonsol();
+                    break;
+                case 5:
+                    cariKonsol();
+                    break;
+                case 6:
+                    if (isAdmin) editKonsol();
+                    else cout << "Akses ditolak.\n";
+                    break;
+                case 7:
+                    if (isAdmin) hapusKonsol();
+                    else cout << "Akses ditolak.\n";
+                    break;
+                case 8:
+                    sewaKonsol();
+                    break;
+                case 9:
+                    if (isAdmin) pengembalianKonsol();
+                    else cout << "Akses ditolak.\n";
+                    break;
                 case 0:
                     cout << "Program selesai.\n";
                     return;
@@ -265,3 +309,4 @@ int main() {
     app.menu();
     return 0;
 }
+
